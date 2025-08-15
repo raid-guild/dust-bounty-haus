@@ -17,8 +17,8 @@
     "test": "mud test"
   },
   "dependencies": {
-    "@dust/programs": "https://pkg.pr.new/dustproject/dust/@dust/programs@ec20311",
-    "@dust/world": "https://pkg.pr.new/dustproject/dust/@dust/world@ec20311",
+    "@dust/programs": "https://pkg.pr.new/dustproject/dust/@dust/programs@f2746c5",
+    "@dust/world": "https://pkg.pr.new/dustproject/dust/@dust/world@f2746c5",
     "@latticexyz/cli": "2.2.23-5ebd3d31b6ab3fbbfa8994fefcbf46d4e44c6ec2",
     "@latticexyz/entrykit": "2.2.23-5ebd3d31b6ab3fbbfa8994fefcbf46d4e44c6ec2",
     "@latticexyz/schema-type": "2.2.23-5ebd3d31b6ab3fbbfa8994fefcbf46d4e44c6ec2",
