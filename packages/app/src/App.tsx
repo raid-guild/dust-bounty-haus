@@ -1,4 +1,15 @@
 import React from "react";
+// Helper to truncate addresses
+function truncateAddress(addr: string, start = 6, end = 4) {
+  if (!addr) return "";
+  return addr.slice(0, start) + "..." + addr.slice(-end);
+}
+
+// RAID token info
+const RAID_TOKEN_ADDRESS = "0xb607Fc7B1d6D7670b6EBE7D33A708B5416b8347C";
+const RAID_TOKEN_SYMBOL = "RAID";
+const RAID_TOKEN_DECIMALS = 18;
+const RAID_TOKEN_IMAGE = '/rglogo.png'; // TODO: Optionally add a token logo URL
 import { spawnPlayer } from "./spawnPlayer";
 import { useDustClient } from "./common/useDustClient";
 import { useSyncStatus } from "./mud/useSyncStatus";
@@ -29,7 +40,6 @@ export default function App() {
 
   // Player spawn count from MUD table (only if address is defined)
   const userAddress = dustClient?.appContext.userAddress;
-  console.log("User address:", userAddress);
   // Always call useRecord to preserve hook order
   const spawnCountKey = { player: userAddress ?? "0x0000000000000000000000000000000000000000" };
   const spawnCountRecord = useRecord({
@@ -37,9 +47,6 @@ export default function App() {
     table: tables.SpawnCount,
     key: spawnCountKey,
   });
-  // Debug output
-  console.log("spawnCountKey", spawnCountKey);
-  console.log("spawnCountRecord", spawnCountRecord);
 
   // TODO: Implement spawnPlayer logic
   async function handleSpawn() {
@@ -79,7 +86,7 @@ export default function App() {
   }
 
   // Determine spawn requirements
-  const spawnCount = (spawnCountRecord as any)?.value?.count ?? 0;
+  const spawnCount = (spawnCountRecord as any)?.count ?? 0;
   const raidBalanceNum = raidBalance ? parseFloat(raidBalance) : 0;
   const needsRaid = spawnCount >= 1;
   const hasEnoughRaid = !needsRaid || raidBalanceNum >= 50;
@@ -88,61 +95,108 @@ export default function App() {
   if (isSpawning) spawnDisabledReason = "Spawning in progress...";
   else if (!hasEnoughRaid && needsRaid) spawnDisabledReason = "You need at least 50 RAID to spawn again.";
 
+  // Raid Guild theme colors
+  const RG_RED = "#e11d48";
+  const RG_DARK = "#18141a";
+  const RG_CARD = "#23202a";
+  const RG_TEXT = "#f3f3f3";
+
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen p-4">
-      <p className="mb-4 text-lg">
-        Hello <AccountName address={dustClient.appContext.userAddress} />
-      </p>
-      <div className="max-w-xl mb-6 p-4 border rounded bg-white/80">
-        <div className="mb-2">
-          <b>Your RAID Balance:</b>
-          {raidLoading && <span className="ml-2 text-gray-500">Loading...</span>}
-          {raidError && <span className="ml-2 text-red-500">Error</span>}
-          {raidBalance !== null && !raidLoading && !raidError && (
-            <span className="ml-2">{raidBalance}</span>
-          )}
+    <div className="flex flex-col items-center justify-center min-h-screen p-2" style={{ background: RG_DARK, overflow: "hidden" }}>
+      <div
+        className="flex flex-col items-center border rounded shadow-lg"
+        style={{ width: 360, height: 580, maxWidth: "100vw", maxHeight: "100vh", padding: 28, overflow: "visible", background: RG_CARD, borderColor: RG_RED }}
+      >
+        {/* Raid Guild Logo Header */}
+        <div className="flex items-center justify-center w-full mb-4 gap-2">
+          <img src="/rglogo.png" alt="Raid Guild" style={{ width: 32, height: 32 }} />
+          <span className="text-xl font-bold tracking-tight" style={{ color: RG_RED }}>Raid Guild</span>
         </div>
-        <div className="mb-2">
-          <b>Your Spawn Count:</b>
-          {!userAddress && <span className="ml-2 text-gray-500">-</span>}
-          {userAddress && spawnCountRecord && (spawnCountRecord as any).error && (
-            <span className="ml-2 text-red-500">Error</span>
-          )}
-          {userAddress && spawnCountRecord && ((spawnCountRecord as any).value || (spawnCountRecord as any).value === undefined) && (
-            <span className="ml-2">{(spawnCountRecord as any).value?.count ?? 0}</span>
-          )}
+        <p className="mb-2 text-lg font-semibold truncate w-full text-center" style={{ color: RG_TEXT }}>
+          Hello <AccountName address={dustClient.appContext.userAddress} />
+        </p>
+        <div className="mb-1 w-full flex items-center justify-between">
+          <b style={{ color: RG_TEXT }}>Your RAID Balance:</b>
+          <span>
+            {raidLoading && <span className="text-gray-400">Loading...</span>}
+            {raidError && <span className="text-red-400">Error</span>}
+            {raidBalance !== null && !raidLoading && !raidError && (
+              <span style={{ color: RG_TEXT }}>{raidBalance}</span>
+            )}
+          </span>
         </div>
-        <h2 className="text-xl font-bold mb-2">Spawn System</h2>
-        <ul className="list-disc ml-6 mb-2">
-          <li>Each new player gets <b>one free spawn</b>.</li>
-          <li>After your free spawn, you must hold <b>50 RAID</b> at token address <code>0xb607Fc7B1d6D7670b6EBE7D33A708B5416b8347C</code> to spawn again.</li>
+        <div className="mb-1 w-full flex items-center justify-between">
+          <b style={{ color: RG_TEXT }}>Your Spawn Count:</b>
+          <span>
+            {!userAddress && <span className="text-gray-400">-</span>}
+            {userAddress && spawnCountRecord && (spawnCountRecord as any).error && (
+              <span className="text-red-400">Error</span>
+            )}
+            {userAddress && spawnCountRecord && (
+              <span style={{ color: RG_TEXT }}>{(spawnCountRecord as any).count ?? 0}</span>
+            )}
+          </span>
+        </div>
+        <div className="mb-3 w-full flex items-center justify-between">
+          <b style={{ color: RG_TEXT }}>RAID Token:</b>
+          <span className="flex items-center gap-2">
+            <code className="text-xs px-1 rounded" style={{ background: RG_DARK, color: RG_TEXT }}>
+              {truncateAddress(RAID_TOKEN_ADDRESS)}
+            </code>
+            <button
+              className="text-xs underline hover:opacity-80"
+              style={{ padding: "2px 6px", color: RG_RED, fontWeight: 600 }}
+              onClick={async () => {
+                if ((window as any).ethereum) {
+                  try {
+                    await (window as any).ethereum.request({
+                      method: "wallet_watchAsset",
+                      params: {
+                        type: "ERC20",
+                        options: {
+                          address: RAID_TOKEN_ADDRESS,
+                          symbol: RAID_TOKEN_SYMBOL,
+                          decimals: RAID_TOKEN_DECIMALS,
+                          image: RAID_TOKEN_IMAGE,
+                        },
+                      },
+                    });
+                  } catch (err) {
+                    alert("MetaMask error: " + (err as any)?.message);
+                  }
+                } else {
+                  alert("MetaMask not detected");
+                }
+              }}
+            >
+              Add to MetaMask
+            </button>
+          </span>
+        </div>
+        <h2 className="text-lg font-bold mb-2 w-full text-center" style={{ color: RG_RED }}>Spawn System</h2>
+        <ul className="list-disc ml-4 mb-2 text-sm w-full" style={{ color: RG_TEXT }}>
+          <li><b>One free spawn</b>.</li>
+          <li>
+            After your free spawn, you must hold <b>50 RAID</b> to spawn again.
+          </li>
           <li>Get Raid by energizing the forcefield</li>
           <li>Learn more about the RAID token and the future projects it will power in the Daily Dust</li>
         </ul>
-        <p className="text-gray-700">By clicking Agree and Spawn, you will be placed at the spawn tile.</p>
+
+        {spawnError && <p className="mb-1 text-xs w-full text-center" style={{ color: RG_RED }}>{spawnError}</p>}
+        <button
+          onClick={handleSpawn}
+          disabled={!canSpawn}
+          title={spawnDisabledReason}
+          className="px-6 py-2 rounded shadow w-full mt-auto font-bold transition-colors duration-150 disabled:opacity-50"
+          style={{ minHeight: 40, background: RG_RED, color: RG_TEXT, border: `1px solid ${RG_RED}` }}
+        >
+          {isSpawning ? "Spawning..." : "Spawn"}
+        </button>
+        {!canSpawn && spawnDisabledReason && (
+          <p className="mt-2 text-xs w-full text-center" style={{ color: RG_RED }}>{spawnDisabledReason}</p>
+        )}
       </div>
-      {playerPosition.data && (
-        <p className="mb-4">Your position: {JSON.stringify(playerPosition.data, null, " ")}</p>
-      )}
-      {spawnError && <p className="text-red-500 mb-2">{spawnError}</p>}
-      {/* Debug info for spawnCountRecord */}
-      <details className="mb-2 w-full max-w-xl">
-        <summary className="cursor-pointer text-xs text-gray-500">Debug: spawnCountRecord</summary>
-        <pre className="text-xs bg-gray-100 p-2 rounded overflow-x-auto">
-          {JSON.stringify({ key: spawnCountKey, record: spawnCountRecord }, null, 2)}
-        </pre>
-      </details>
-      <button
-        onClick={handleSpawn}
-        disabled={!canSpawn}
-        title={spawnDisabledReason}
-        className="bg-green-600 text-white px-6 py-2 rounded shadow hover:bg-green-700 disabled:opacity-50"
-      >
-        {isSpawning ? "Spawning..." : "Agree and Spawn"}
-      </button>
-      {!canSpawn && spawnDisabledReason && (
-        <p className="text-red-500 mt-2">{spawnDisabledReason}</p>
-      )}
     </div>
   );
 }
