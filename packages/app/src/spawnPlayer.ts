@@ -26,10 +26,17 @@ export async function spawnPlayer(dustClient: any): Promise<{ error?: string }> 
     ],
   });
 
-  const error = decodeError(
+  let error = decodeError(
     IWorldAbi,
     result.transactionHash ? result.receipt : result.receipt.receipt
   );
+
+  // Fallback error message if decodeError returns undefined
+  if (!error && result && result.error && typeof result.error.message === "string") {
+    console.error("Spawn error:", result.error.message);
+    error = result.error.message;
+  }
+
 
   return { error };
 }

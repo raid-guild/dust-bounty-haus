@@ -29,22 +29,31 @@ export default function App() {
 
   // Player spawn count from MUD table (only if address is defined)
   const userAddress = dustClient?.appContext.userAddress;
+  console.log("User address:", userAddress);
   // Always call useRecord to preserve hook order
+  const spawnCountKey = { player: userAddress ?? "0x0000000000000000000000000000000000000000" };
   const spawnCountRecord = useRecord({
     stash,
     table: tables.SpawnCount,
-    key: { player: userAddress ?? "0x0000000000000000000000000000000000000000" },
+    key: spawnCountKey,
   });
+  // Debug output
+  console.log("spawnCountKey", spawnCountKey);
+  console.log("spawnCountRecord", spawnCountRecord);
 
   // TODO: Implement spawnPlayer logic
   async function handleSpawn() {
     setIsSpawning(true);
     setSpawnError(null);
     try {
-      // TODO: Import the correct ABI for your SpawnSystem and pass as needed
-      await spawnPlayer({ dustClient });
+      if (!dustClient) throw new Error("Dust client not connected");
+      const { error } = await spawnPlayer(dustClient);
+      if (error) {
+        setSpawnError(error);
+      }
     } catch (e: any) {
       setSpawnError(e.message || "Failed to spawn");
+      console.error("Spawn error:", e);
     } finally {
       setIsSpawning(false);
     }
@@ -69,6 +78,16 @@ export default function App() {
     );
   }
 
+  // Determine spawn requirements
+  const spawnCount = (spawnCountRecord as any)?.value?.count ?? 0;
+  const raidBalanceNum = raidBalance ? parseFloat(raidBalance) : 0;
+  const needsRaid = spawnCount >= 1;
+  const hasEnoughRaid = !needsRaid || raidBalanceNum >= 50;
+  const canSpawn = !isSpawning && hasEnoughRaid;
+  let spawnDisabledReason = "";
+  if (isSpawning) spawnDisabledReason = "Spawning in progress...";
+  else if (!hasEnoughRaid && needsRaid) spawnDisabledReason = "You need at least 50 RAID to spawn again.";
+
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-4">
       <p className="mb-4 text-lg">
@@ -89,11 +108,8 @@ export default function App() {
           {userAddress && spawnCountRecord && (spawnCountRecord as any).error && (
             <span className="ml-2 text-red-500">Error</span>
           )}
-          {userAddress && spawnCountRecord && (spawnCountRecord as any).value && (
-            <span className="ml-2">{(spawnCountRecord as any).value.count ?? 0}</span>
-          )}
-          {userAddress && spawnCountRecord && !(spawnCountRecord as any).error && !(spawnCountRecord as any).value && (
-            <span className="ml-2 text-gray-500">Loading...</span>
+          {userAddress && spawnCountRecord && ((spawnCountRecord as any).value || (spawnCountRecord as any).value === undefined) && (
+            <span className="ml-2">{(spawnCountRecord as any).value?.count ?? 0}</span>
           )}
         </div>
         <h2 className="text-xl font-bold mb-2">Spawn System</h2>
@@ -109,13 +125,24 @@ export default function App() {
         <p className="mb-4">Your position: {JSON.stringify(playerPosition.data, null, " ")}</p>
       )}
       {spawnError && <p className="text-red-500 mb-2">{spawnError}</p>}
+      {/* Debug info for spawnCountRecord */}
+      <details className="mb-2 w-full max-w-xl">
+        <summary className="cursor-pointer text-xs text-gray-500">Debug: spawnCountRecord</summary>
+        <pre className="text-xs bg-gray-100 p-2 rounded overflow-x-auto">
+          {JSON.stringify({ key: spawnCountKey, record: spawnCountRecord }, null, 2)}
+        </pre>
+      </details>
       <button
         onClick={handleSpawn}
-        disabled={isSpawning}
+        disabled={!canSpawn}
+        title={spawnDisabledReason}
         className="bg-green-600 text-white px-6 py-2 rounded shadow hover:bg-green-700 disabled:opacity-50"
       >
         {isSpawning ? "Spawning..." : "Agree and Spawn"}
       </button>
+      {!canSpawn && spawnDisabledReason && (
+        <p className="text-red-500 mt-2">{spawnDisabledReason}</p>
+      )}
     </div>
   );
 }

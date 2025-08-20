@@ -38,8 +38,8 @@ struct RootCallWrapper {
 library BHSpawnTileProgramLib {
   error BHSpawnTileProgramLib_CallingFromRootSystem();
 
-  function onSpawn(BHSpawnTileProgramType self, HookContext memory ctx, ISpawn.SpawnData memory __auxArg0) internal {
-    return CallWrapper(self.toResourceId(), address(0)).onSpawn(ctx, __auxArg0);
+  function onSpawn(BHSpawnTileProgramType self, HookContext memory ctx, ISpawn.SpawnData memory spawn) internal {
+    return CallWrapper(self.toResourceId(), address(0)).onSpawn(ctx, spawn);
   }
 
   function _msgSender(BHSpawnTileProgramType self) internal view returns (address __auxRet0) {
@@ -50,11 +50,11 @@ library BHSpawnTileProgramLib {
     return CallWrapper(self.toResourceId(), address(0))._msgValue();
   }
 
-  function onSpawn(CallWrapper memory self, HookContext memory ctx, ISpawn.SpawnData memory __auxArg0) internal {
+  function onSpawn(CallWrapper memory self, HookContext memory ctx, ISpawn.SpawnData memory spawn) internal {
     // if the contract calling this function is a root system, it should use `callAsRoot`
     if (address(_world()) == address(this)) revert BHSpawnTileProgramLib_CallingFromRootSystem();
 
-    bytes memory systemCall = abi.encodeCall(_onSpawn_HookContext_ISpawn_SpawnData.onSpawn, (ctx, __auxArg0));
+    bytes memory systemCall = abi.encodeCall(_onSpawn_HookContext_ISpawn_SpawnData.onSpawn, (ctx, spawn));
     self.from == address(0)
       ? _world().call(self.systemId, systemCall)
       : _world().callFrom(self.from, self.systemId, systemCall);
@@ -96,8 +96,8 @@ library BHSpawnTileProgramLib {
     }
   }
 
-  function onSpawn(RootCallWrapper memory self, HookContext memory ctx, ISpawn.SpawnData memory __auxArg0) internal {
-    bytes memory systemCall = abi.encodeCall(_onSpawn_HookContext_ISpawn_SpawnData.onSpawn, (ctx, __auxArg0));
+  function onSpawn(RootCallWrapper memory self, HookContext memory ctx, ISpawn.SpawnData memory spawn) internal {
+    bytes memory systemCall = abi.encodeCall(_onSpawn_HookContext_ISpawn_SpawnData.onSpawn, (ctx, spawn));
     SystemCall.callWithHooksOrRevert(self.from, self.systemId, systemCall, msg.value);
   }
 
@@ -160,7 +160,7 @@ library BHSpawnTileProgramLib {
  */
 
 interface _onSpawn_HookContext_ISpawn_SpawnData {
-  function onSpawn(HookContext memory ctx, ISpawn.SpawnData memory __auxArg0) external;
+  function onSpawn(HookContext memory ctx, ISpawn.SpawnData memory spawn) external;
 }
 
 interface __msgSender {
