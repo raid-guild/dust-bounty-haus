@@ -8,9 +8,9 @@
     "clean": "forge clean && shx rm -rf src/**/codegen",
     "mud:up": "pnpm mud set-version --tag main && pnpm install",
     "foundry:up": "curl -L https://foundry.paradigm.xyz | bash && bash $HOME/.foundry/bin/foundryup",
-    "deploy:redstone": ". ./set-env.sh redstone && mud deploy --alwaysRunPostDeploy --profile=$FOUNDRY_PROFILE --worldAddress=$WORLD_ADDRESS",
-    "manager:registerApp:local": ". ./set-env.sh local && forge script RegisterApp --broadcast --sig 'run(address)' $WORLD_ADDRESS",
-    "manager:registerApp:redstone": ". ./set-env.sh redstone && forge script RegisterApp --sig 'run(address)' $WORLD_ADDRESS",
+    "deploy:redstone": "bash -c '. ./set-env.sh redstone && mud deploy --alwaysRunPostDeploy --profile=$FOUNDRY_PROFILE --worldAddress=$WORLD_ADDRESS'",
+    "manager:registerApp:local": "bash -c '. ./set-env.sh local && forge script RegisterApp --broadcast --sig 'run(address)' $WORLD_ADDRESS'",
+    "manager:registerApp:redstone": "bash -c '. ./set-env.sh redstone && forge script RegisterApp --sig 'run(address)' $WORLD_ADDRESS'",
     "lint": "pnpm run prettier && pnpm run solhint",
     "prettier": "prettier --write 'src/**/*.sol'",
     "solhint": "solhint --config ./.solhint.json 'src/**/*.sol' --fix",
@@ -26,7 +26,8 @@
     "@latticexyz/world": "2.2.23-5ebd3d31b6ab3fbbfa8994fefcbf46d4e44c6ec2",
     "@latticexyz/world-consumer": "2.2.23-5ebd3d31b6ab3fbbfa8994fefcbf46d4e44c6ec2",
     "@latticexyz/world-module-metadata": "2.2.23-5ebd3d31b6ab3fbbfa8994fefcbf46d4e44c6ec2",
-    "@openzeppelin/contracts": "^4.9.6",
+    "@openzeppelin/contracts": "^5.4.0",
+    "@openzeppelin/contracts-upgradeable": "^5.4.0",
     "solady": "^0.1.14"
   },
   "devDependencies": {
@@ -40,7 +41,6 @@
     "solhint": "^3.6.2",
     "solhint-config-mud": "2.2.23-5ebd3d31b6ab3fbbfa8994fefcbf46d4e44c6ec2",
     "solhint-plugin-mud": "2.2.23-5ebd3d31b6ab3fbbfa8994fefcbf46d4e44c6ec2",
-    "tsx": "^4.20.3",
     "typescript": "^5.8.3",
     "viem": "^2.33.0"
   }

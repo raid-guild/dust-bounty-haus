@@ -22,6 +22,7 @@ remappings = [
   "@latticexyz/=node_modules/@latticexyz/",
   "@dust/=node_modules/@dust/",
   "solady/=node_modules/solady/src/",
+  "@openzeppelin/=node_modules/@openzeppelin/",
 ]
 script_execution_protection = false
 dynamic_test_linking = true

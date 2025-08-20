@@ -5,20 +5,32 @@ import { StoreSwitch } from "@latticexyz/store/src/StoreSwitch.sol";
 import { console } from "forge-std/console.sol";
 
 import { Script } from "./Script.sol";
+import { Systems } from "@latticexyz/world/src/codegen/tables/Systems.sol";
 
-import { bedProgram } from "../src/codegen/systems/BedProgramLib.sol";
+import { Admin } from "../src/codegen/tables/Admin.sol";
+import { forceFieldMintProgram } from "../src/codegen/systems/ForceFieldMintProgramLib.sol";
 
-import { chestCounterProgram } from "../src/codegen/systems/ChestCounterProgramLib.sol";
-import { chestProgram } from "../src/codegen/systems/ChestProgramLib.sol";
-import { forceFieldProgram } from "../src/codegen/systems/ForceFieldProgramLib.sol";
-import { spawnTileProgram } from "../src/codegen/systems/SpawnTileProgramLib.sol";
+address constant ADMIN1 = 0xCED608Aa29bB92185D9b6340Adcbfa263DAe075b;
+address constant ADMIN2 = 0x34bfCd82f1E3Dac79c6b3D033ab871EE4f6AAECa;
 
 contract PostDeploy is Script {
   function run(address worldAddress) external {
     StoreSwitch.setStoreAddress(worldAddress);
-    startBroadcast();
+    address sender = startBroadcast();
 
-    // do something
+
+    console.log("Setting admin", sender);
+    Admin.set(sender, true);
+    console.log("Setting admin", ADMIN1);
+    Admin.set(ADMIN1, true);
+    console.log("Setting admin", ADMIN2);
+    Admin.set(ADMIN2, true);
+
+    (address programAddress, ) = Systems.get(forceFieldMintProgram.toResourceId());
+    (bool success, ) = programAddress.call(abi.encodeWithSignature("setAccessGroup()"));
+    require(success, "setAccessGroup() failed");
+
+
 
     vm.stopBroadcast();
 
@@ -32,10 +44,6 @@ contract PostDeploy is Script {
   function _setLocalWorldAddress(address worldAddress) internal {
     bytes32 worldSlot = keccak256("mud.store.storage.StoreSwitch");
     bytes32 worldAddressBytes32 = bytes32(uint256(uint160(worldAddress)));
-    vm.store(forceFieldProgram.getAddress(), worldSlot, worldAddressBytes32);
-    vm.store(spawnTileProgram.getAddress(), worldSlot, worldAddressBytes32);
-    vm.store(bedProgram.getAddress(), worldSlot, worldAddressBytes32);
-    vm.store(chestProgram.getAddress(), worldSlot, worldAddressBytes32);
-    vm.store(chestCounterProgram.getAddress(), worldSlot, worldAddressBytes32);
+    vm.store(forceFieldMintProgram.getAddress(), worldSlot, worldAddressBytes32);
   }
 }

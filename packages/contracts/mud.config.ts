@@ -23,38 +23,38 @@ export default defineWorld({
     },
   },
   // Replace this with a unique namespace
-  namespace: "template",
+  namespace: "rgtmpff1",
   systems: {
-    ForceFieldProgram: {
+    ForceFieldMintProgram: {
       openAccess: false,
       deploy: { registerWorldFunctions: false },
     },
-    SpawnTileProgram: {
+    AdminSystem: {
+      deploy: { registerWorldFunctions: false },
+    },
+    BHSpawnTileProgram: {
       openAccess: false,
       deploy: { registerWorldFunctions: false },
     },
-    ChestProgram: {
-      openAccess: false,
-      deploy: { registerWorldFunctions: false },
-    },
-    BedProgram: {
-      openAccess: false,
-      deploy: { registerWorldFunctions: false },
-    },
-    CounterSystem: {
-      deploy: { registerWorldFunctions: false },
-    },
-    ChestCounterProgram: {
+    RGTokenSystem: {
       openAccess: false,
       deploy: { registerWorldFunctions: false },
     },
   },
   tables: {
-    Counter: {
+    Admin: {
       schema: {
-        value: "uint256",
+        admin: "address",
+        isAdmin: "bool",
       },
-      key: [],
+      key: ["admin"],
+    },
+    SpawnCount: {
+      schema: {
+        player: "address",
+        count: "uint32",
+      },
+      key: ["player"],
     },
   },
 });
