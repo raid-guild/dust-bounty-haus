@@ -1,6 +1,6 @@
 {
   "$schema": "https://esm.sh/pr/dustproject/dust/dustkit@ac7725c/json-schemas/app-config.json",
-  "name": "My First App",
+  "name": "Mine RAID",
   "startUrl": "/",
   "defaultSize": {
     "width": 600,
