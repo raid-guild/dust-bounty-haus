@@ -1,3 +1,4 @@
+
 import { defineWorld } from "@latticexyz/world";
 
 export default defineWorld({
@@ -36,6 +37,10 @@ export default defineWorld({
       openAccess: false,
       deploy: { registerWorldFunctions: false },
     },
+    BHChestProgram: {
+      openAccess: false,
+      deploy: { registerWorldFunctions: false },
+    },
     RGTokenSystem: {
       openAccess: false,
       deploy: { registerWorldFunctions: false },
@@ -55,6 +60,21 @@ export default defineWorld({
         count: "uint32",
       },
       key: ["player"],
+    },
+    ChestPurchases: {
+      schema: {
+        player: "address",
+        item: "ObjectType",
+        count: "uint32",
+      },
+      key: ["player", "item"],
+    },
+    ItemPrice: {
+      schema: {
+        item: "ObjectType",
+        price: "uint256",
+      },
+      key: ["item"],
     },
   },
 });

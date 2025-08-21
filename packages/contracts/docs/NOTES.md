@@ -70,22 +70,28 @@ new token
 
 
 
-d:cli:deploy found world deploy for 0x253eb85B3C953bFE3827CC14a151262482E7189C at block 18756337n +178ms
-  mud:common:deploy found node_modules/@dust/world/src/systems/libraries/TerrainLib.sol:TerrainLib library at 0x85614e46BeA4364afe93Fc7C1502ECd9BbdEF915 +639ms
-  mud:common:deploy found CallWithSignatureModule module at 0x51BD8d2De7017C23ee5BdC885e70DFdd0862b837 +419ms
-  mud:common:deploy deploying rgtmpff1__RGTokenSystem system at 0x9EAc3CccB7DdFb042B66c4F57822e63398ef3041 +5ms
-  mud:common:deploy found rgtmpff1__ForceFieldMintPr system at 0xE88c2Bcbc0DA6bbccba8B3de8da7217F06b6a7D1 +4ms
-  mud:common:deploy found rgtmpff1__BHSpawnTileProgr system at 0xFc3410806284060fB53e729cBF476aa9F4EEe13E +11ms
-  mud:common:deploy found node_modules/@dust/world/src/utils/InventoryUtils.sol:InventoryUtils library at 0x735a05c6496Fbb4fE57aaD49D8454037911D7800 +2ms
-  mud:common:deploy found rgtmpff1__AdminSystem system at 0xcd02141d4dCc1c0bD6A4370a6A42bC2BD9b49b33 +8ms
+    mud:common:deploy found node_modules/@dust/world/src/systems/libraries/TerrainLib.sol:TerrainLib library at 0x85614e46BeA4364afe93Fc7C1502ECd9BbdEF915 +788ms
+  mud:common:deploy found node_modules/@dust/world/src/utils/InventoryUtils.sol:InventoryUtils library at 0x735a05c6496Fbb4fE57aaD49D8454037911D7800 +210ms
+  mud:common:deploy found rgtmpff1__BHSpawnTileProgr system at 0x97625fbA7A92B582C74B38E690d9C2457D3Aed07 +55ms
+  mud:common:deploy found rgtmpff1__AdminSystem system at 0x14CfB76B69b22440Db1806bA049Cafcfd2B48f70 +100ms
+  mud:common:deploy found CallWithSignatureModule module at 0x51BD8d2De7017C23ee5BdC885e70DFdd0862b837 +7ms
+  mud:common:deploy deploying rgtmpff1__BHChestProgram system at 0xE3672FCc5fC960Db60C9e7B0cDCdEFd113270E25 +19ms
+  mud:common:deploy found rgtmpff1__RGTokenSystem system at 0x9EAc3CccB7DdFb042B66c4F57822e63398ef3041 +1ms
+  mud:common:deploy found rgtmpff1__ForceFieldMintPr system at 0x1EDd848C542EfFf76E9bfD42FaE07Ed262280E35 +32ms
+  mud:common:createNonceManager reset nonce
 
-  mud:cli:deploy found world deploy for 0x253eb85B3C953bFE3827CC14a151262482E7189C at block 18756337n +183ms
-  mud:common:deploy found node_modules/@dust/world/src/systems/libraries/TerrainLib.sol:TerrainLib library at 0x85614e46BeA4364afe93Fc7C1502ECd9BbdEF915 +556ms
-  mud:common:deploy found rgtmpff1__AdminSystem system at 0xcd02141d4dCc1c0bD6A4370a6A42bC2BD9b49b33 +265ms
-  mud:common:deploy found rgtmpff1__RGTokenSystem system at 0x9EAc3CccB7DdFb042B66c4F57822e63398ef3041 +10ms
-  mud:common:deploy found CallWithSignatureModule module at 0x51BD8d2De7017C23ee5BdC885e70DFdd0862b837 +11ms
-  mud:common:deploy found rgtmpff1__ForceFieldMintPr system at 0xE88c2Bcbc0DA6bbccba8B3de8da7217F06b6a7D1 +3ms
-  mud:common:deploy found node_modules/@dust/world/src/utils/InventoryUtils.sol:InventoryUtils library at 0x735a05c6496Fbb4fE57aaD49D8454037911D7800 +113ms
-  mud:common:deploy found rgtmpff1__BHSpawnTileProgr system at 0xFc3410806284060fB53e729cBF476aa9F4EEe13E +149ms
-  mud:cli:deploy looking up resource IDs for 0x253eb85B3C953bFE3827CC14a151262482E7189C +742ms
-  mud:store-sync fetching rec
+
+   ObjectType constant WoodenAxe = ObjectType.wrap(32774); first free, cost 50
+   ObjectType constant CopperAxe = ObjectType.wrap(32775); cost 200
+   ObjectType constant WheatSlop = ObjectType.wrap(32790); cost 150
+
+   https://github.com/dustproject/programs-workshop-1/blob/vdrg/experiments/src/ChestProgram.sol
+
+   chest entity id:
+   new chest program 0x73797267746d706666310000000000004248436865737450726f6772616d0000
+
+   Entity: 0x030000052e0000009afffffc5f00000000000000000000000000000000000000
+   old Program: 0x7379646670726f6772616d735f310000436865737450726f6772616d00000000
+
+   Entity: 0x030000052e0000009afffffc5f00000000000000000000000000000000000000
+    Program: 0x73797267746d706666310000000000004248436865737450726f6772616d0000

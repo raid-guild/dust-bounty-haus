@@ -5,3 +5,5 @@ pragma solidity >=0.8.24;
 
 import { Admin } from "./tables/Admin.sol";
 import { SpawnCount } from "./tables/SpawnCount.sol";
+import { ChestPurchases } from "./tables/ChestPurchases.sol";
+import { ItemPrice } from "./tables/ItemPrice.sol";

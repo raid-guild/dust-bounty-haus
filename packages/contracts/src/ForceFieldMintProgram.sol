@@ -59,7 +59,6 @@ contract ForceFieldMintProgram is
   }
 
   function setAccessGroup() external {
-    // TODO: replace with your force field entity ID
     EntityId forceField = EntityId.wrap(0x030000051b0000009afffffc6300000000000000000000000000000000000000);
     emit AccessGroupSet(_msgSender(), msg.sender, address(this), forceField);
     require(Admin.get(_msgSender()), "Only admin can set access groups");
