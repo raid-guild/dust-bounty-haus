@@ -68,7 +68,7 @@ new token
   UUPS RGToken deployed at: 0xb607Fc7B1d6D7670b6EBE7D33A708B5416b8347C
   Implementation at: 0x87A6dD4d9ef522DeE884F41907A361Bad94b1ebf
 
-
+ipfs token logo https://charactersheets.mypinata.cloud/ipfs/QmUoW3bZ7QcJXaDPySdV32TEUWojd5eir6b2eUkrvEfKy4
 
     mud:common:deploy found node_modules/@dust/world/src/systems/libraries/TerrainLib.sol:TerrainLib library at 0x85614e46BeA4364afe93Fc7C1502ECd9BbdEF915 +788ms
   mud:common:deploy found node_modules/@dust/world/src/utils/InventoryUtils.sol:InventoryUtils library at 0x735a05c6496Fbb4fE57aaD49D8454037911D7800 +210ms
@@ -95,3 +95,11 @@ new token
 
    Entity: 0x030000052e0000009afffffc5f00000000000000000000000000000000000000
     Program: 0x73797267746d706666310000000000004248436865737450726f6772616d0000
+
+    chest 2
+    Entity: 0x030000052e0000009afffffc6200000000000000000000000000000000000000
+old Program: 0x7379646670726f6772616d735f310000436865737450726f6772616d00000000
+
+chest 3
+Entity: 0x030000052e0000009afffffc6500000000000000000000000000000000000000
+old Program: 0x7379646670726f6772616d735f310000436865737450726f6772616d00000000

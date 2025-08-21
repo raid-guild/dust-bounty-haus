@@ -9,7 +9,7 @@ function truncateAddress(addr: string, start = 6, end = 4) {
 const RAID_TOKEN_ADDRESS = "0xb607Fc7B1d6D7670b6EBE7D33A708B5416b8347C";
 const RAID_TOKEN_SYMBOL = "RAID";
 const RAID_TOKEN_DECIMALS = 18;
-const RAID_TOKEN_IMAGE = '/rglogo.png'; // TODO: Optionally add a token logo URL
+const RAID_TOKEN_IMAGE = 'https://charactersheets.mypinata.cloud/ipfs/QmUoW3bZ7QcJXaDPySdV32TEUWojd5eir6b2eUkrvEfKy4'; // TODO: Optionally add a token logo URL
 import { spawnPlayer } from "./spawnPlayer";
 import { useDustClient } from "./common/useDustClient";
 import { useSyncStatus } from "./mud/useSyncStatus";
