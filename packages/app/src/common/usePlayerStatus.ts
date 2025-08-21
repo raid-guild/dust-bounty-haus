@@ -6,12 +6,15 @@ import { usePlayerEntityId } from "./usePlayerEntityId";
 
 export function usePlayerStatus(): "alive" | "dead" {
   const { data: playerEntityId } = usePlayerEntityId();
-
+  console.log("Player Entity ID:", playerEntityId);
+  console.log("table:", tables.Energy); 
   const energy = useRecord({
     stash,
     table: tables.Energy,
     key: { entityId: playerEntityId ?? "0x" },
   });
+
+  console.log("Player Energy:", energy);  
 
   const optimisticEnergy = useMemo(() => {
     if (!energy) return undefined;
