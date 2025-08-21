@@ -9,7 +9,7 @@ import { RGToken } from "../src/RGToken.sol";
 contract AuthorizeMinter is Script {
   function run() external {
     vm.startBroadcast();
-    RGToken(0xb607Fc7B1d6D7670b6EBE7D33A708B5416b8347C).authorizeMinter(0xE88c2Bcbc0DA6bbccba8B3de8da7217F06b6a7D1);
+    RGToken(0xb607Fc7B1d6D7670b6EBE7D33A708B5416b8347C).authorizeMinter(0x1EDd848C542EfFf76E9bfD42FaE07Ed262280E35);
     vm.stopBroadcast();
   }
 }

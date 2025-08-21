@@ -11,10 +11,13 @@ export function useRaidBalance(_provider: any, userAddress: string | undefined |
   const [balance, setBalance] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [refreshIndex, setRefreshIndex] = useState(0);
 
   // Replace with your actual RPC URL
   const RPC_URL = "https://rpc.redstonechain.com"; 
   const provider = new ethers.JsonRpcProvider(RPC_URL);
+
+  const refetch = () => setRefreshIndex(i => i + 1);
 
   useEffect(() => {
     if (!userAddress) {
@@ -35,7 +38,7 @@ export function useRaidBalance(_provider: any, userAddress: string | undefined |
         console.error("RAID balance error:", e);
       })
       .finally(() => setLoading(false));
-  }, [userAddress]);
+  }, [userAddress, refreshIndex]);
 
-  return { balance, loading, error };
+  return { balance, loading, error, refetch };
 }

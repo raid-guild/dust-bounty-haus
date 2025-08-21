@@ -43,7 +43,6 @@ export default function App() {
   const { data: dustClient } = useDustClient();
   const syncStatus = useSyncStatus();
   const playerStatus = usePlayerStatus();
-  const playerPosition = usePlayerPositionQuery();
 
   // Placeholder for spawn state
   const [isSpawning, setIsSpawning] = React.useState(false);
@@ -52,7 +51,7 @@ export default function App() {
 
 
   // RAID balance
-  const { balance: raidBalance, loading: raidLoading, error: raidError } = useRaidBalance(
+  const { balance: raidBalance, loading: raidLoading, error: raidError, refetch: refetchRaidBalance } = useRaidBalance(
     dustClient?.provider,
     dustClient?.appContext.userAddress
   );
@@ -196,12 +195,21 @@ export default function App() {
             </p>
             <div className="mb-1 w-full flex items-center justify-between">
               <b style={{ color: RG_TEXT }}>Your RAID Balance:</b>
-              <span>
+              <span className="flex items-center gap-1">
                 {raidLoading && <span className="text-gray-400">Loading...</span>}
                 {raidError && <span className="text-red-400">Error</span>}
                 {raidBalance !== null && !raidLoading && !raidError && (
                   <span style={{ color: RG_TEXT }}>{raidBalance}</span>
                 )}
+                <button
+                  onClick={refetchRaidBalance}
+                  title="Refresh balance"
+                  style={{ marginLeft: 6, background: 'none', border: 'none', cursor: 'pointer', color: RG_RED, fontSize: 16, padding: 0 }}
+                  disabled={raidLoading}
+                  aria-label="Refresh RAID balance"
+                >
+                  &#x21bb;
+                </button>
               </span>
             </div>
             <div className="mb-1 w-full flex items-center justify-between">
