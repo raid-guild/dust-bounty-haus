@@ -17,6 +17,7 @@ import { usePlayerStatus } from "./common/usePlayerStatus";
 import { AccountName } from "./common/AccountName";
 import { useRaidBalance } from "./useRaidBalance";
 import { useRecord } from "@latticexyz/stash/react";
+import {Map} from "./app/Map";
 import { stash, tables } from "./mud/stash";
 
 // Item ObjectType values and display names (from contracts):
@@ -34,7 +35,8 @@ export default function App() {
 
   // Waypoints data
   const WAYPOINTS: { label: string; coords: [number, number, number] }[] = [
-    { label: 'Floating Castle (Force Field)', coords: [1304, 154, -925] },
+    { label: 'Floating Castle', coords: [1304, 154, -925] },
+    { label: 'Force Field', coords: [1304, 154, -924] },
     { label: 'Axe Shop', coords: [1324, 154, -926] },
     { label: 'Guild Games', coords: [1305, 154, -908] },
     { label: 'Forest Maze', coords: [1301, 149, -953] },
@@ -42,10 +44,15 @@ export default function App() {
     { label: 'Moloch Monument', coords: [1258, 153, -945] },
     { label: 'Member Totems', coords: [1238, 151, -934] },
     { label: 'Obby Towners', coords: [1246, 151, -916] },
+    { label: 'Dance Floor', coords: [1131, 77, -872] },
     { label: 'Farm Village', coords: [1046, 62, -932] },
     { label: 'Daily Dust Tree', coords: [1033, 70, -917] },
     { label: 'Visiting Giant Sea Turtle', coords: [1019, 66, -903] },
   ];
+
+  // Selected waypoint center for map view ([x, z])
+  const [selectedCenter, setSelectedCenter] = React.useState<[number, number] | null>(null);
+  const [showList, setShowList] = React.useState(false);
 
   const { data: dustClient } = useDustClient();
   const syncStatus = useSyncStatus();
@@ -163,9 +170,9 @@ export default function App() {
       <div className="flex flex-col items-center border rounded shadow-lg" style={{ width: 360, height: 580, maxWidth: '100vw', maxHeight: '100vh', padding: 28, background: RG_CARD, borderColor: RG_RED }}>
         {/* Tabs */}
         <div className="flex w-full mb-4">
-          <button className={`flex-1 py-2 rounded-tl rounded-bl font-bold ${activeTab === 'main' ? '' : 'opacity-60'}`} style={{ background: activeTab === 'main' ? RG_RED : RG_CARD, color: RG_TEXT, border: `1px solid ${RG_RED}` }} onClick={() => setActiveTab('main')}>Main</button>
-          <button className={`flex-1 py-2 rounded-tr rounded-br font-bold ${activeTab === 'items' ? '' : 'opacity-60'}`} style={{ background: activeTab === 'items' ? RG_RED : RG_CARD, color: RG_TEXT, border: `1px solid ${RG_RED}` }} onClick={() => setActiveTab('items')}>Shop Items</button>
-          <button className={`flex-1 py-2 font-bold ${activeTab === 'waypoints' ? '' : 'opacity-60'}`} style={{ background: activeTab === 'waypoints' ? RG_RED : RG_CARD, color: RG_TEXT, border: `1px solid ${RG_RED}` }} onClick={() => setActiveTab('waypoints')}>Tour</button>
+          <button className={`flex-1 py-2 rounded-tl rounded-bl font-bold ${activeTab === 'main' ? '' : 'opacity-60'}`} style={{ background: activeTab === 'main' ? RG_RED : RG_CARD, color: RG_TEXT, border: `1px solid ${RG_RED}` }} onClick={() => setActiveTab('main')}>$RAID</button>
+          <button className={`flex-1 py-2 rounded-tr rounded-br font-bold ${activeTab === 'items' ? '' : 'opacity-60'}`} style={{ background: activeTab === 'items' ? RG_RED : RG_CARD, color: RG_TEXT, border: `1px solid ${RG_RED}` }} onClick={() => setActiveTab('items')}>Shop</button>
+          <button className={`flex-1 py-2 font-bold ${activeTab === 'waypoints' ? '' : 'opacity-60'}`} style={{ background: activeTab === 'waypoints' ? RG_RED : RG_CARD, color: RG_TEXT, border: `1px solid ${RG_RED}` }} onClick={() => setActiveTab('waypoints')}>Tour HQ</button>
         </div>
 
         {/* Main Tab */}
@@ -175,6 +182,12 @@ export default function App() {
               <img src="/rglogo.png" alt="Raid Guild" style={{ width: 32, height: 32 }} />
               <span className="text-xl font-bold tracking-tight" style={{ color: RG_RED }}>Raid Guild</span>
             </div>
+
+            {/* Short tagline */}
+            <p className="mb-1 text-xs text-center w-full" style={{ color: RG_TEXT }}>
+              JOIN US! Chop trees, get batteries, energize the camp and get $RAID.
+            </p>
+
             <p className="mb-2 text-lg font-semibold truncate w-full text-center" style={{ color: RG_TEXT }}>Hello <AccountName address={dustClient.appContext.userAddress} /></p>
 
             <div className="mb-1 w-full flex items-center justify-between">
@@ -209,7 +222,7 @@ export default function App() {
             <h2 className="text-lg font-bold mb-2 w-full text-center" style={{ color: RG_RED }}>Spawn System</h2>
             <ul className="list-disc ml-4 mb-2 text-sm w-full" style={{ color: RG_TEXT }}>
               <li><b>One free spawn</b>.</li>
-              <li>After your free spawn, you must hold <b>50 RAID</b> to spawn again.</li>
+              <li>Hold <b>50 RAID</b> to spawn again.</li>
               <li>Get Raid by energizing the <a href="#" style={{ color: RG_RED, textDecoration: 'underline' }} onClick={async (e) => { e.preventDefault(); if (!dustClient) return; try { const { encodeBlock } = await import('@dust/world/internal'); const entityId = encodeBlock([1304, 154, -925]); await dustClient.provider.request({ method: 'setWaypoint', params: { entity: entityId, label: 'forcefield (1304,154,-925)' } }); setWaypointDialog({ open: true, message: 'Waypoint set to forcefield at (1304, 154, -925)', error: false }); } catch (err: any) { setWaypointDialog({ open: true, message: 'Failed to set waypoint: ' + (err?.message ?? err), error: true }); } }}>forcefield</a></li>
             </ul>
 
@@ -223,6 +236,9 @@ export default function App() {
         {activeTab === 'items' && (
           <div className="w-full">
             <h2 className="text-lg font-bold mb-2 w-full text-center" style={{ color: RG_RED }}>Items Purchased</h2>
+            <p className="mb-1 text-xs text-center w-full" style={{ color: RG_TEXT }}>
+              go to the shop chest in the floating castle to gear up!
+            </p>
             <table className="w-full text-sm mb-2" style={{ color: RG_TEXT }}>
               <thead>
                 <tr><th className="text-left pb-1">Item</th><th className="text-right pb-1">Cost (RAID)</th><th className="text-right pb-1">Purchased</th></tr>
@@ -239,39 +255,50 @@ export default function App() {
         {/* Waypoints Tab */}
         {activeTab === 'waypoints' && (
           <div className="w-full">
-            {/* Background image container with muted overlay */}
-            <div className="w-full relative mb-2" style={{ borderRadius: 6, overflow: 'hidden' }}>
-              {/* Background image (muted) */}
-              <div
-                style={{
-                  position: 'absolute',
-                  inset: 0,
-                  backgroundImage: "url('/rghqmap.png')",
-                  backgroundSize: 'cover',
-                  backgroundPosition: 'center',
-                  filter: 'grayscale(1) contrast(0.9) blur(0.5px)',
-                  opacity: 0.45,
-                }}
-              />
-              {/* Dark overlay to ensure readability */}
-              <div style={{ position: 'absolute', inset: 0, backgroundColor: 'rgba(0,0,0,0.45)' }} />
-              {/* Foreground content */}
-              <div style={{ position: 'relative', zIndex: 1, padding: 10 }}>
-                <h2 className="text-lg font-bold mb-2 w-full text-center" style={{ color: RG_RED }}>Camp Waypoints</h2>
-                <ul className="mb-2">
-                  {WAYPOINTS.map((wp) => (
-                    <li key={wp.label} className="flex items-center justify-between mb-2 text-sm">
-                      <span style={{ color: RG_TEXT }}>{wp.label}</span>
-                      <button className="ml-2 px-2 py-1 rounded text-xs font-bold" style={{ background: RG_RED, color: RG_TEXT, border: `1px solid ${RG_RED}` }} onClick={() => handleSetWaypoint(wp.label, wp.coords)}>
-                        Set Waypoint
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-                <p className="text-xs text-center" style={{ color: RG_TEXT }}>Tap a button to set your in-game waypoint to a key location in the Raid Guild Camp.</p>
+
+
+              <div style={{ position: 'relative', zIndex: 1, padding: 0 }}>
+                {/* Map / List toggle area - fills more of the card */}
+                <div style={{ width: '100%', height: 440, display: 'flex', flexDirection: 'column' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 8, position: 'relative' }}>
+                    <h2 className="text-lg font-bold w-full text-center" style={{ color: RG_RED }}>Camp Waypoints</h2>
+                    <div style={{ position: 'absolute', right: 8, top: -4 }}>
+                      <button className="px-2 py-1 rounded text-xs" style={{ background: 'rgba(255,255,255,0.06)', color: RG_TEXT }} onClick={() => setShowList(!showList)}>{showList ? 'Show Map' : 'Show List'}</button>
+                    </div>
+                  </div>
+
+                  <div style={{ flex: 1, width: '100%', borderRadius: 6, overflow: 'hidden', position: 'relative' }}>
+                    {/* Always keep the Map mounted to preserve the Leaflet instance. We only
+                        show/hide the list as an overlay so toggling won't remount the map. */}
+                      <div style={{ width: '100%', height: '100%' }}>
+                      <Map waypoints={WAYPOINTS} highlight={selectedCenter} visible={!showList} onSetWaypoint={(label, coords) => { handleSetWaypoint(label, coords); setSelectedCenter([coords[0], coords[2]]); }} onFocus={(center) => setSelectedCenter(center)} />
+                    </div>
+
+                    {showList && (
+                      <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.8)', padding: 8, overflowY: 'auto' }}>
+                        <ul className="mb-2 ">
+                          {WAYPOINTS.map((wp) => (
+                            <li key={wp.label} className="flex items-center justify-between mb-2 text-xs">
+                              <span style={{ color: RG_TEXT }}>{wp.label}</span>
+                              <div className="flex items-center gap-2">
+                                <button className="ml-2 px-2 py-1 rounded text-xs font-bold" style={{ background: RG_RED, color: RG_TEXT, border: `1px solid ${RG_RED}` }} onClick={() => { handleSetWaypoint(wp.label, wp.coords); setSelectedCenter([wp.coords[0], wp.coords[2]]); }}>
+                                  Set Waypoint
+                                </button>
+                                <button className="ml-1 px-2 py-1 rounded text-xs" style={{ background: 'rgba(255,255,255,0.06)', color: RG_TEXT, border: `1px solid rgba(255,255,255,0.04)` }} onClick={() => setSelectedCenter([wp.coords[0], wp.coords[2]])}>
+                                  Focus
+                                </button>
+                              </div>
+                            </li>
+                          ))}
+                        </ul>
+                        <p className="text-xs text-center" style={{ color: RG_TEXT }}>Tap a button to set your in-game waypoint to a key location in the Raid Guild Camp.</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
+          
         )}
 
       </div>

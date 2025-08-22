@@ -5,3 +5,24 @@
 body {
   background-color: #fff;
 }
+
+/* Local player marker styling used by LocalPlayerMarker divIcon */
+.local-marker {
+  width: 24px;
+  height: 24px;
+  display: block;
+}
+.local-marker-inner {
+  width: 24px;
+  height: 24px;
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* Waypoint triangle icon (inline SVG) adjustments */
+.waypoint-div-icon {
+  display: inline-block;
+  transform: translateY(-6px); /* nudge so tip points accurately */
+  pointer-events: auto;
+}
